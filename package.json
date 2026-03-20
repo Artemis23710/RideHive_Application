@@ -1,0 +1,31 @@
+{
+  "name": "ridehive-vue",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx vite",
+    "build": "npx vite build",
+    "preview": "npx vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.4.0",
+    "vue-router": "^4.3.0",
+    "pinia": "^2.1.7",
+    "@vueuse/core": "^10.9.0",
+    "lucide-vue-next": "^0.383.0",
+    "recharts": "^2.12.7",
+    "vue-chartjs": "^5.3.0",
+    "chart.js": "^4.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.18",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "typescript": "^5.5.4",
+    "vite": "^5.2.0",
+    "tailwindcss": "3.4.17",
+    "autoprefixer": "latest",
+    "postcss": "latest",
+    "vue-tsc": "^2.0.6"
+  }
+}
