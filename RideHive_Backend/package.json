@@ -1,0 +1,27 @@
+{
+  "name": "mynodeserver",
+  "version": "1.0.0",
+  "description": "A Node.js server using Express and MongoDB",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "nodemon src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "author": "Janith Jayarathna",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.19.2",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^7.8.0",
+    "morgan": "^1.10.0",
+    "multer": "^2.0.2",
+    "winston": "^3.13.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
