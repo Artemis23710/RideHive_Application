@@ -19,7 +19,7 @@
               </div>
               <input
                 id="email"
-                v-model="form.email"
+                v-model="email"
                 type="email"
                 autocomplete="email"
                 required
@@ -36,7 +36,7 @@
               </div>
               <input
                 id="password"
-                v-model="form.password"
+                v-model="password"
                 type="password"
                 autocomplete="current-password"
                 required
@@ -51,7 +51,6 @@
           <div class="flex items-center">
             <input
               id="remember-me"
-              v-model="form.rememberMe"
               type="checkbox"
               class="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
             />
@@ -95,17 +94,82 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { Car, Mail, Lock } from 'lucide-vue-next'
 import AppButton from '../components/ui/AppButton.vue'
+import { buildApiUrl, API_CONFIG } from '../config/api'
 
-const form = reactive({
-  email: '',
-  password: '',
-  rememberMe: false,
-})
+const router = useRouter()
+const email = ref('')
+const password = ref('')
+const errorMessage = ref('')
+const isLoading = ref(false)
 
-function handleSubmit() {
-  console.log('Login form submitted:', form)
+
+const handleSubmit = async () => {
+  // Basic validation
+  if (!email.value || !password.value) {
+    errorMessage.value = 'Please fill in all fields'
+    return
+  }
+
+  errorMessage.value = ''
+  isLoading.value = true
+
+  try {
+    console.log('Login with:', {
+      email: email.value,
+      password: password.value
+    })
+
+    const response = await fetch(buildApiUrl(API_CONFIG.endpoints.auth.login), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value
+      })
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Login failed')
+    }
+
+    if (data.message === 'Login successful') {
+      console.log('Login successful:', data.data.user)
+      
+      // Store user data and token in localStorage
+      localStorage.setItem('user', JSON.stringify(data.data.user))
+      if (data.token) {
+        localStorage.setItem('token', data.token)
+      }
+      // Redirect to admin page
+      router.push('/customerdashboard')
+    } else {
+      throw new Error(data.error || 'Login failed')
+    }
+
+  } catch (error: any) {
+    console.error('Login error:', error)
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      errorMessage.value = 'Network error: Unable to connect to server'
+    } else if (error.message === 'Invalid email or password') {
+      errorMessage.value = 'Invalid email or password. Please try again.'
+    } else {
+      errorMessage.value = error.message || 'An error occurred during login. Please try again.'
+    }
+  } finally {
+    isLoading.value = false
+  }
 }
+
+
+
+
 </script>

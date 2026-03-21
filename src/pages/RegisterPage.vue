@@ -11,40 +11,22 @@
 
       <form class="mt-8 space-y-6" @submit.prevent="handleSubmit">
         <div class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label for="firstName" class="sr-only">First name</label>
+              <label for="firstName" class="sr-only">Full Name</label>
               <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <UserIcon class="h-5 w-5 text-gray-400" />
                 </div>
                 <input
                   id="firstName"
-                  v-model="form.firstName"
+                  v-model="formData.fullName"
                   type="text"
                   required
-                  placeholder="First name"
+                  placeholder="Full Name"
                   class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
             </div>
-            <div>
-              <label for="lastName" class="sr-only">Last name</label>
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <UserIcon class="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="lastName"
-                  v-model="form.lastName"
-                  type="text"
-                  required
-                  placeholder="Last name"
-                  class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                />
-              </div>
-            </div>
-          </div>
 
           <div>
             <label for="email" class="sr-only">Email address</label>
@@ -54,7 +36,7 @@
               </div>
               <input
                 id="email"
-                v-model="form.email"
+                v-model="formData.email"
                 type="email"
                 autocomplete="email"
                 required
@@ -72,7 +54,7 @@
               </div>
               <input
                 id="password"
-                v-model="form.password"
+                v-model="formData.password"
                 type="password"
                 autocomplete="new-password"
                 required
@@ -86,7 +68,7 @@
         <div class="flex items-center">
           <input
             id="agree-terms"
-            v-model="form.agreeTerms"
+            v-model="formData.termsAccepted"
             type="checkbox"
             required
             class="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
@@ -132,19 +114,107 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { ref, reactive } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
 import { Car, Mail, Lock, User as UserIcon } from 'lucide-vue-next'
 import AppButton from '../components/ui/AppButton.vue'
+import { buildApiUrl, API_CONFIG } from '../config/api'
 
-const form = reactive({
-  firstName: '',
-  lastName: '',
+const router = useRouter()
+
+
+const isLoading = ref(false)
+const errorMessage = ref('')
+const successMessage = ref('')
+
+
+const formData = reactive({
+  fullName: '',
   email: '',
   password: '',
-  agreeTerms: false,
+  termsAccepted: false,
 })
 
-function handleSubmit() {
-  console.log('Register form submitted:', form)
+const handleSubmit = async () => {
+  // Basic validation
+  if (!formData.fullName || !formData.email || !formData.password) {
+    errorMessage.value = 'Please fill in all fields'
+    return
+  }
+
+  if (!formData.termsAccepted) {
+    errorMessage.value = 'Please accept the terms and conditions'
+    return
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(formData.email)) {
+    errorMessage.value = 'Please enter a valid email address'
+    return
+  }
+
+  if (formData.password.length < 6) {
+    errorMessage.value = 'Password must be at least 6 characters long'
+    return
+  }
+
+  errorMessage.value = ''
+  successMessage.value = ''
+  isLoading.value = true
+
+  try {
+    console.log('Register with:', {
+      name: formData.fullName,
+      email: formData.email,
+      password: formData.password
+    })
+
+    const response = await fetch(buildApiUrl(API_CONFIG.endpoints.auth.register), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: formData.fullName,
+        email: formData.email,
+        password: formData.password
+      })
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.error || data.message || 'Registration failed')
+    }
+
+    // Check for success based on the actual API response structure
+    if (response.ok && data.message === 'User created successfully') {
+      successMessage.value = data.message || 'Registration successful!'
+      console.log('Registration successful:', data.data)
+      
+      // Redirect to login page after successful registration
+      setTimeout(() => {
+        router.push('/login') // This matches your route name 'loginPage'
+      }, 2000)
+    } else {
+      throw new Error(data.error || data.message || 'Registration failed')
+    }
+
+  } catch (error: any) {
+    console.error('Registration error:', error)
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      errorMessage.value = 'Network error: Unable to connect to server. Please try again later.'
+    } else if (error.message.includes('Email already exists') || error.message.includes('User already exists')) {
+      errorMessage.value = 'An account with this email already exists. Please use a different email or login.'
+    } else if (error.message.includes('Invalid email') || error.message.includes('email format')) {
+      errorMessage.value = 'Please enter a valid email address.'
+    } else if (error.message.includes('password') || error.message.includes('Password')) {
+      errorMessage.value = 'Password requirements not met. Please try a different password.'
+    } else {
+      errorMessage.value = error.message || 'An error occurred during registration. Please try again.'
+    }
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>

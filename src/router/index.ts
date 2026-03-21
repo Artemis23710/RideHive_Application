@@ -3,17 +3,15 @@ import LandingPage from '../pages/LandingPage.vue'
 import LoginPage from '../pages/LoginPage.vue'
 import RegisterPage from '../pages/RegisterPage.vue'
 import CustomerDashboard from '../pages/customer/Dashboard.vue'
-import AdminDashboard from '../pages/admin/Dashboard.vue'
 import NotFoundPage from '../pages/NotFoundPage.vue'
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', component: LandingPage },
-    { path: '/login', component: LoginPage, meta: { minimal: true } },
-    { path: '/register', component: RegisterPage, meta: { minimal: true } },
-    { path: '/customer/dashboard', component: CustomerDashboard },
-    { path: '/admin/dashboard', component: AdminDashboard },
+    { path: '/',  name: '/', component: LandingPage },
+    { path: '/login',name: 'login', component: LoginPage, meta: { minimal: true } },
+    { path: '/register',name: 'register', component: RegisterPage, meta: { minimal: true } },
+    { path: '/customerdashboard',name: 'customerdashboard', component: CustomerDashboard },
     { path: '/:pathMatch(.*)*', component: NotFoundPage },
   ],
   scrollBehavior(to) {
