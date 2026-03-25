@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-200">
-    <Navbar :minimal="isMinimal" />
+    <Navbar :minimal="isMinimal" :is-dashboard="isDashboard"/>
     <main class="flex-grow">
       <RouterView />
     </main>
-    <Footer v-if="!isMinimal" />
+    <Footer v-if="!isMinimal" :is-dashboard="isDashboard" />
   </div>
 </template>
 
@@ -16,4 +16,5 @@ import Footer from './components/layout/Footer.vue'
 
 const route = useRoute()
 const isMinimal = computed(() => !!route.meta.minimal)
+const isDashboard = computed(() => !!route.meta.dashboard)
 </script>

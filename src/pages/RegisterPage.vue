@@ -28,6 +28,23 @@
               </div>
             </div>
 
+            <div>
+              <label for="phonenumber" class="sr-only">Phone Number</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Phone class="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="phonenumber"
+                  v-model="formData.phonenumber"
+                  type="text"
+                  required
+                  placeholder="Phone Number"
+                  class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
+            </div>
+
           <div>
             <label for="email" class="sr-only">Email address</label>
             <div class="relative">
@@ -116,7 +133,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { Car, Mail, Lock, User as UserIcon } from 'lucide-vue-next'
+import { Car, Mail, Lock, Phone, User as UserIcon } from 'lucide-vue-next'
 import AppButton from '../components/ui/AppButton.vue'
 import { buildApiUrl, API_CONFIG } from '../config/api'
 
@@ -132,6 +149,7 @@ const formData = reactive({
   fullName: '',
   email: '',
   password: '',
+  phonenumber: '',
   termsAccepted: false,
 })
 
@@ -177,7 +195,8 @@ const handleSubmit = async () => {
       body: JSON.stringify({
         name: formData.fullName,
         email: formData.email,
-        password: formData.password
+        password: formData.password,
+        phonenumber: formData.phonenumber,
       })
     })
 

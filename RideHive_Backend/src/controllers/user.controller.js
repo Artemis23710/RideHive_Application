@@ -244,11 +244,12 @@ async function RegisterUser(req, res, next) {
     const userData = {
       name: req.body.name,
       email: req.body.email,
-      password: req.body.password
+      password: req.body.password,
+      phone: req.body.phonenumber
     };
 
     // Validate required fields
-    if (!userData.name || !userData.email || !userData.password) {
+    if (!userData.name || !userData.email || !userData.password || !userData.phone) {
       return res.status(400).json({
         error: 'Missing required fields: name, email, password'
       });
@@ -261,6 +262,7 @@ async function RegisterUser(req, res, next) {
       _id: user._id,
       name: user.name,
       email: user.email,
+      phone: user.phonenumber,
       createdAt: user.createdAt
     };
 

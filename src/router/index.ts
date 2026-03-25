@@ -11,7 +11,7 @@ const router = createRouter({
     { path: '/',  name: '/', component: LandingPage },
     { path: '/login',name: 'login', component: LoginPage, meta: { minimal: true } },
     { path: '/register',name: 'register', component: RegisterPage, meta: { minimal: true } },
-    { path: '/customerdashboard',name: 'customerdashboard', component: CustomerDashboard },
+    { path: '/customerdashboard',name: 'customerdashboard', component: CustomerDashboard , meta: { dashboard: true }  },
     { path: '/:pathMatch(.*)*', component: NotFoundPage },
   ],
   scrollBehavior(to) {
@@ -19,7 +19,8 @@ const router = createRouter({
       return { el: to.hash, behavior: 'smooth' }
     }
     return { top: 0 }
-  }
+  },
+  meta: { hideNavBar: true }
 })
 
 export default router

@@ -6,7 +6,7 @@ const userSchema = new Schema({
   email: { type: String, required: [true, 'Email is required'], unique: true, lowercase: true },
   password: { type: String, required: [true, 'Password is required'] },
   phone: {  type: String, trim: true, default: '' },
-  role: {  type: String, default: 'User' },
+  role: {  type: String, default: 'Customer' },
   status: {  type: String, enum: ['Active', 'Inactive', 'Suspended'], default: 'Active' },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
