@@ -5,20 +5,6 @@ export const API_CONFIG = {
       login: '/api/auth/login',
       register: '/api/auth/register',
     },
-    users: {
-      list: '/api/users/all',
-      create: '/api/users/create',
-      update: '/api/users/update',
-      delete: '/api/users/delete',
-      stats: '/api/users/stats'
-    },
-    vehicles: {
-      list: '/api/vehicals/all',
-      create: '/api/vehicals/create',
-      update: '/api/vehicals/update',
-      delete: '/api/vehicals/delete',
-      stats: '/api/vehicals/stats'
-    },
      tours: {
       list: '/api/tours/all',
       create: '/api/tours/create',
